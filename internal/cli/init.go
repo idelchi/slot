@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
@@ -9,26 +10,21 @@ import (
 	"github.com/idelchi/slot/internal/completions"
 )
 
-// Completions returns the cobra command for generating shell completions.
-func Completions(_ *Options) *cobra.Command {
+// Init returns the cobra command for generating shell integration scripts.
+func Init() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "completions <shell>",
-		Short: "Generate shell completion snippets",
+		Use:   "init <shell>",
+		Short: "Generate shell integration snippets",
 		Long: heredoc.Doc(`
 			Generate shell integration snippets for the specified shell.
 
 			The integration allows 'slot run' to place rendered commands into
 			the prompt for editing before execution.
 		`),
-		Example: heredoc.Doc(`
-			# Generate bash completion
-			$ slot completions bash >> ~/.bashrc
-
-			# Generate zsh completion
-			$ slot completions zsh >> ~/.zshrc
-		`),
 		Args: cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
+			supported := []string{"bash", "zsh"}
+
 			shell := args[0]
 
 			switch shell {
@@ -41,7 +37,7 @@ func Completions(_ *Options) *cobra.Command {
 
 				return nil
 			default:
-				return fmt.Errorf("unsupported shell %q (supported: bash, zsh)", shell)
+				return fmt.Errorf("unsupported shell %q (supported: %v)", shell, strings.Join(supported, ", "))
 			}
 		},
 	}

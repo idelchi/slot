@@ -13,7 +13,7 @@ Save and render named shell commands with Go template substitution
 `slot` is a command-line tool for managing and executing shell commands with ease.
 
 - Save commands with Go template variables and tags for organization in a simple YAML file
-- Render commands with variable substitution using `--with KEY=VAL`
+- Render commands with variable substitution using `KEY=VAL`
 - Shell integration places rendered commands into your prompt for execution
 
 ## Installation
@@ -33,7 +33,7 @@ $ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
 
 ```sh
 # Render a command with variable substitution
-$ slot render deploy --with file=k8s.yml
+$ slot render deploy file=k8s.yml
 kubectl apply -f k8s.yml
 ```
 
@@ -60,19 +60,17 @@ Slots are stored in YAML format at `~/.config/slot/slots.yaml`.
 
 ## Shell Integration
 
-Generate shell completion snippets for command placement:
+Generate shell integration snippets for command placement:
 
 ```sh
-# Generate bash integration
-$ slot completions bash
-
-# Generate zsh integration
-$ slot completions zsh
+# Generate integration
+$ slot init <shell>
 ```
 
-The integration allows `slot render` commands to place rendered output into your shell prompt for editing before execution.
+The integration enables the the `slot run` command which places rendered output
+into your shell prompt for editing before execution.
 
-Use `--yes` to execute the rendered command directly without editing.
+Use `--yes/-y` to execute the rendered command directly without editing.
 
 ## Commands
 
@@ -89,9 +87,7 @@ Use `--yes` to execute the rendered command directly without editing.
 <details>
 <summary><strong>render</strong> — Render a saved command slot</summary>
 
-- **Usage:** `slot render <name> [flags]`
-- **Flags:**
-  - `--with KEY=VAL` – Variable substitution (repeatable)
+- **Usage:** `slot render <name> [key=value...]`
 
 </details>
 
@@ -112,26 +108,12 @@ Use `--yes` to execute the rendered command directly without editing.
 </details>
 
 <details>
-<summary><strong>path</strong> — Show the path to the slots file</summary>
+<summary><strong>init</strong> — Generate shell integration snippets</summary>
 
-- **Usage:** `slot path`
-
-</details>
-
-<details>
-<summary><strong>completions</strong> — Generate shell completion snippets</summary>
-
-- **Usage:** `slot completions <shell>`
+- **Usage:** `slot init <shell>`
 - **Supported shells:** bash, zsh
 
 </details>
-
-## Shell insertion
-
-Run `slot completions <shell>` to generate shell integration snippets.
-
-You can then use `slot run <name> [--yes/-y]` to either place the rendered command
-into your prompt for editing or execute it directly.
 
 ## Multiline commands
 

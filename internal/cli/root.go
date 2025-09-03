@@ -1,13 +1,8 @@
 package cli
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
-
-	"github.com/idelchi/slot/internal/store"
 )
 
 // Constants for CLI configuration.
@@ -25,8 +20,6 @@ type Options struct {
 
 // Execute runs the root command for the slot CLI application.
 func Execute(version string) error {
-	options := &Options{}
-
 	root := &cobra.Command{
 		Use:   "slot",
 		Short: "Save and render named shell command slots",
@@ -36,16 +29,18 @@ func Execute(version string) error {
 			Save commands with Go template variables and tags, then render them with variable substitution.
 			Use shell completions to place rendered commands into your prompt for execution.
 			All operations are logged for audit purposes.
+
+			Add 'eval $(slot init <shell>)' to your shell configuration to enable command substitution.
 		`),
 		Example: heredoc.Doc(`
 			# Save a command with template variables
 			$ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
 
 			# Render with variable substitution
-			$ slot run deploy --with file=k8s.yml
+			$ slot run deploy --file=k8s.yml
 
 			# Generate shell integration
-			$ slot completions bash
+			$ slot init bash
 
 			# List all slots
 			$ slot ls
@@ -64,47 +59,13 @@ func Execute(version string) error {
 	root.CompletionOptions.DisableDefaultCmd = true
 	cobra.EnableCommandSorting = false
 
-	root.PersistentFlags().
-		BoolVarP(&options.Verbose, "verbose", "v", false, "Increase verbosity level")
-
 	root.AddCommand(
-		Save(options),
-		Run(options),
-		List(options),
-		Remove(options),
-		Path(options),
-		Completions(options),
+		Save(),
+		Render(),
+		List(),
+		Remove(),
+		Init(),
 	)
 
-	if err := root.Execute(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// mustStore creates a new Store instance or exits on error.
-func mustStore() *store.Store {
-	s, err := store.New()
-	if err != nil {
-		panic(err) // In CLI context, this is acceptable
-	}
-
-	return s
-}
-
-// parseWith parses --with flags into a key-value map.
-func parseWith(items []string) (map[string]string, error) {
-	out := make(map[string]string)
-
-	for _, s := range items {
-		kv := strings.SplitN(s, "=", KeyValueParts)
-		if len(kv) != KeyValueParts {
-			return nil, fmt.Errorf("bad --with format %q (want KEY=VAL)", s)
-		}
-
-		out[kv[0]] = kv[1]
-	}
-
-	return out, nil
+	return root.Execute()
 }

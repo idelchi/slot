@@ -15,24 +15,21 @@ import (
 type Store struct {
 	// Path is the location of the slots database file.
 	Path string
-	// LogPath is the location of the audit log file.
-	LogPath string
 }
 
 // New creates a new Store instance with resolved data directory paths.
 func New() (*Store, error) {
-	dataDir, err := getDataDir()
+	dataDir, err := GetDataDir()
 	if err != nil {
 		return nil, err
 	}
 
 	if err := os.MkdirAll(dataDir, 0o750); err != nil {
-		return nil, fmt.Errorf("failed to create data directory: %w", err)
+		return nil, fmt.Errorf("creating data directory: %w", err)
 	}
 
 	return &Store{
-		Path:    filepath.Join(dataDir, "slots.yaml"),
-		LogPath: filepath.Join(dataDir, "slots.log"),
+		Path: filepath.Join(dataDir, "slots.yaml"),
 	}, nil
 }
 
@@ -46,50 +43,36 @@ func (store *Store) Load() (model.DB, error) {
 			return database, nil
 		}
 
-		return database, fmt.Errorf("failed to read slots file: %w", err)
+		return database, fmt.Errorf("reading slots file: %w", err)
 	}
 
 	if err := yaml.Unmarshal(data, &database); err != nil {
-		return database, fmt.Errorf("failed to unmarshal slots: %w", err)
+		return database, fmt.Errorf("unmarshalling slots: %w", err)
 	}
 
 	return database, nil
 }
 
-// Save writes the slot database to disk atomically using a temporary file.
+// Save writes the slot database to disk.
 func (store *Store) Save(database model.DB) error {
-	data, err := yaml.MarshalWithOptions(
-		database,
-	) // yaml.UseLiteralStyleIfMultiline(true), // Use literal style for multiline strings
+	data, err := yaml.MarshalWithOptions(database)
 	if err != nil {
-		return fmt.Errorf("failed to marshal slots: %w", err)
+		return fmt.Errorf("marshalling slots: %w", err)
 	}
 
-	tempPath := store.Path + ".tmp"
-	if err := os.WriteFile(tempPath, data, 0o600); err != nil {
-		return fmt.Errorf("failed to write temp file: %w", err)
-	}
-
-	if err := os.Rename(tempPath, store.Path); err != nil {
-		_ = os.Remove(tempPath) // Ignore cleanup errors
-
-		return fmt.Errorf("failed to rename temp file: %w", err)
+	if err := os.WriteFile(store.Path, data, 0o600); err != nil {
+		return fmt.Errorf("writing file: %w", err)
 	}
 
 	return nil
 }
 
-// getDataDir resolves the data directory path.
-func getDataDir() (string, error) {
+// GetDataDir resolves the data directory path.
+func GetDataDir() (string, error) {
 	home, err := os.UserHomeDir()
 	if err != nil {
-		return ".", fmt.Errorf("failed to get home directory: %w", err)
+		return ".", fmt.Errorf("getting home directory: %w", err)
 	}
 
 	return filepath.Join(home, ".config", "slot"), nil
-}
-
-// GetLogPath returns the audit log file path.
-func (store *Store) GetLogPath() string {
-	return store.LogPath
 }

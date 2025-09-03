@@ -10,10 +10,11 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/idelchi/slot/internal/model"
+	"github.com/idelchi/slot/internal/store"
 )
 
 // List returns the cobra command for listing command slots.
-func List(_ *Options) *cobra.Command {
+func List() *cobra.Command {
 	var filterTags []string
 
 	cmd := &cobra.Command{
@@ -35,7 +36,11 @@ func List(_ *Options) *cobra.Command {
 		Aliases: []string{"list"},
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			store := mustStore()
+			store, err := store.New()
+			if err != nil {
+				return err
+			}
+
 			database, err := store.Load()
 			if err != nil {
 				return err
@@ -53,9 +58,11 @@ func List(_ *Options) *cobra.Command {
 			})
 
 			writer := tabwriter.NewWriter(cmd.OutOrStdout(), 0, 0, TabSpacing, ' ', 0)
+			fmt.Fprintf(writer, "[%s]\n\n", store.Path)
 			if _, err := fmt.Fprintln(writer, "NAME\tTAGS\tCMD"); err != nil {
 				return err
 			}
+
 			for _, slot := range items {
 				fmt.Fprintf(writer, "%s\t%s\t%s\n", slot.Name, strings.Join(slot.Tags, ","), slot.Cmd)
 			}

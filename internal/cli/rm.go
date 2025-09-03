@@ -4,35 +4,40 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+
+	"github.com/idelchi/slot/internal/store"
 )
 
 // Remove returns the cobra command for removing command slots.
-func Remove(_ *Options) *cobra.Command {
+func Remove() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "rm <name>",
+		Use:     "rm <slot>",
 		Short:   "Delete a saved slot",
 		Aliases: []string{"remove", "delete"},
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			store := mustStore()
-			name := args[0]
+			store, err := store.New()
+			if err != nil {
+				return err
+			}
 
 			database, err := store.Load()
 			if err != nil {
 				return err
 			}
 
-			if _, ok := database.Slots[name]; !ok {
-				return fmt.Errorf("no such slot %q", name)
+			slot := args[0]
+			if _, ok := database.Slots[slot]; !ok {
+				return fmt.Errorf("no such slot %q", slot)
 			}
 
-			delete(database.Slots, name)
+			delete(database.Slots, slot)
 
 			if err := store.Save(database); err != nil {
 				return err
 			}
 
-			fmt.Fprintf(cmd.OutOrStdout(), "removed %q\n", name)
+			fmt.Fprintf(cmd.OutOrStdout(), "removed %q\n", slot)
 
 			return nil
 		},

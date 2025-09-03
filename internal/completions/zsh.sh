@@ -1,6 +1,4 @@
-
-# #####################
-# slot wrapper for bash
+# slot wrapper for zsh
 slot() {
   emulate -L zsh
   set -o pipefail
@@ -11,11 +9,11 @@ slot() {
     local do_exec=0
     local -a passthru=()
     for arg in "$@"; do
-      if [[ "$arg" == "--yes" || "$arg" == "-y" ]]; then
+      if [[ "${arg}" == "--yes" || "${arg}" == "-y" ]]; then
         do_exec=1
         continue
       fi
-      passthru+=("$arg")
+      passthru+=("${arg}")
     done
 
     local rendered rc
@@ -24,16 +22,16 @@ slot() {
 
     if (( rc != 0 )); then
       # If the app printed its error to STDOUT, surface it.
-      [[ -n "$rendered" ]] && print -u2 -- "$rendered"
-      return $rc
+      [[ -n "${rendered}" ]] && print -u2 -- "${rendered}"
+      return ${rc}
     fi
 
-    [[ -z "$rendered" ]] && return 0
+    [[ -z "${rendered}" ]] && return 0
 
     if (( do_exec )); then
-      eval "$rendered"         # no history push
+      eval "${rendered}"         # no history push
     else
-      print -z -- "$rendered" 2>/dev/null || print -r -- "$rendered"
+      print -z -- "${rendered}" 2>/dev/null || print -r -- "${rendered}"
     fi
     return $?
   fi
