@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"path/filepath"
 	"sort"
 	"strings"
 	"text/tabwriter"
@@ -58,7 +59,6 @@ func List() *cobra.Command {
 			})
 
 			writer := tabwriter.NewWriter(cmd.OutOrStdout(), 0, 0, TabSpacing, ' ', 0)
-			fmt.Fprintf(writer, "[%s]\n\n", store.Path)
 			if _, err := fmt.Fprintln(writer, "NAME\tTAGS\tCMD"); err != nil {
 				return err
 			}
@@ -66,6 +66,8 @@ func List() *cobra.Command {
 			for _, slot := range items {
 				fmt.Fprintf(writer, "%s\t%s\t%s\n", slot.Name, strings.Join(slot.Tags, ","), slot.Cmd)
 			}
+
+			fmt.Fprintf(writer, "\n[%s]\n", filepath.ToSlash(store.Path))
 
 			return writer.Flush()
 		},
