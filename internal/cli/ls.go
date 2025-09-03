@@ -47,15 +47,15 @@ func List() *cobra.Command {
 				return err
 			}
 
-			var items []model.Slot
-			for _, slot := range database.Slots {
-				items = append(items, slot)
+			var items []slotWithName
+			for name, slot := range database.Slots {
+				items = append(items, slotWithName{name: name, slot: slot})
 			}
 
 			items = filterSlotsByTags(items, filterTags)
 
 			sort.Slice(items, func(i, j int) bool {
-				return items[i].Name < items[j].Name
+				return items[i].name < items[j].name
 			})
 
 			writer := tabwriter.NewWriter(cmd.OutOrStdout(), 0, 0, TabSpacing, ' ', 0)
@@ -63,8 +63,8 @@ func List() *cobra.Command {
 				return err
 			}
 
-			for _, slot := range items {
-				fmt.Fprintf(writer, "%s\t%s\t%s\n", slot.Name, strings.Join(slot.Tags, ","), slot.Cmd)
+			for _, item := range items {
+				fmt.Fprintf(writer, "%s\t%s\t%s\n", item.name, strings.Join(item.slot.Tags, ","), item.slot.Cmd)
 			}
 
 			fmt.Fprintf(writer, "\n%s\n", filepath.ToSlash(store.Path))
@@ -78,21 +78,27 @@ func List() *cobra.Command {
 	return cmd
 }
 
+// slotWithName pairs a slot name with its data for sorting and display.
+type slotWithName struct {
+	name string
+	slot model.Slot
+}
+
 // filterSlotsByTags returns slots that contain all specified tags.
-func filterSlotsByTags(slots []model.Slot, filterTags []string) []model.Slot {
+func filterSlotsByTags(slots []slotWithName, filterTags []string) []slotWithName {
 	if len(filterTags) == 0 {
 		return slots
 	}
 
-	var result []model.Slot
+	var result []slotWithName
 
-	for _, slot := range slots {
+	for _, item := range slots {
 		hasAllTags := true
 
 		for _, filterTag := range filterTags {
 			found := false
 
-			for _, slotTag := range slot.Tags {
+			for _, slotTag := range item.slot.Tags {
 				if slotTag == filterTag {
 					found = true
 
@@ -108,7 +114,7 @@ func filterSlotsByTags(slots []model.Slot, filterTags []string) []model.Slot {
 		}
 
 		if hasAllTags {
-			result = append(result, slot)
+			result = append(result, item)
 		}
 	}
 

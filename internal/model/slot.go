@@ -3,8 +3,6 @@ package model
 
 // Slot represents a saved command with metadata.
 type Slot struct {
-	// Name is the unique identifier for the slot.
-	Name string
 	// Cmd is the command template with placeholders.
 	Cmd string
 	// Tags are optional labels for organizing slots.

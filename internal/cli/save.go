@@ -62,7 +62,6 @@ func Save() *cobra.Command {
 			}
 
 			database.Slots[slot] = model.Slot{
-				Name: slot,
 				Cmd:  rawCommand,
 				Tags: tags,
 			}
