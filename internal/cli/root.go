@@ -34,16 +34,16 @@ func Execute(version string) error {
 		`),
 		Example: heredoc.Doc(`
 			# Save a command with template variables
-			$ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
+			slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
 
 			# Render with variable substitution
-			$ slot run deploy --file=k8s.yml
+			slot run deploy --file=k8s.yml
 
 			# Generate shell integration
-			$ slot init bash
+			slot init bash
 
 			# List all slots
-			$ slot ls
+			slot ls
 		`),
 		Version:       version,
 		SilenceErrors: true,

@@ -7,7 +7,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 
-	"github.com/idelchi/slot/internal/completions"
+	"github.com/idelchi/slot/internal/integration"
 )
 
 // Init returns the cobra command for generating shell integration scripts.
@@ -29,11 +29,11 @@ func Init() *cobra.Command {
 
 			switch shell {
 			case "bash":
-				fmt.Fprint(cmd.OutOrStdout(), completions.Bash)
+				fmt.Fprint(cmd.OutOrStdout(), integration.Bash)
 
 				return nil
 			case "zsh":
-				fmt.Fprint(cmd.OutOrStdout(), completions.Zsh)
+				fmt.Fprint(cmd.OutOrStdout(), integration.Zsh)
 
 				return nil
 			default:

@@ -25,13 +25,13 @@ func List() *cobra.Command {
 		`),
 		Example: heredoc.Doc(`
 			# List all slots in table format
-			$ slot ls
+			slot ls
 
 			# Show only slots tagged with 'k8s'
-			$ slot ls --tag k8s
+			slot ls --tag k8s
 
 			# Multiple tag filters (AND logic)
-			$ slot ls --tag k8s --tag prod
+			slot ls --tag k8s --tag prod
 		`),
 		Aliases: []string{"list"},
 		Args:    cobra.NoArgs,

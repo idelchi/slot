@@ -28,13 +28,13 @@ func Save() *cobra.Command {
 		`),
 		Example: heredoc.Doc(`
 			# Save a simple command
-			$ slot save hello 'echo "Hello World!"'
+			slot save hello 'echo "Hello World!"'
 
 			# Save with template variables and tags
-			$ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
+			slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
 
 			# Overwrite existing slot
-			$ slot save deploy 'kubectl apply -f {{.file}} --namespace {{.ns}}' --force
+			slot save deploy 'kubectl apply -f {{.file}} --namespace {{.ns}}' --force
 		`),
 		Args: cobra.ExactArgs(SaveArgsCount),
 		RunE: func(cmd *cobra.Command, args []string) error {

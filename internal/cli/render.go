@@ -26,10 +26,10 @@ func Render() *cobra.Command {
 		`),
 		Example: heredoc.Doc(`
 			# Render a command with variable substitution
-			$ slot render deploy file=k8s.yml ns=production
+			slot render deploy file=k8s.yml ns=production
 
 			# Render command without variables
-			$ slot render hello
+			slot render hello
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
