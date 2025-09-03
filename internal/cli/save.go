@@ -19,7 +19,7 @@ func Save() *cobra.Command {
 
 	cmd := &cobra.Command{
 		Use:   "save <slot> <command>",
-		Short: "Save a named command slot",
+		Short: "Save a slot",
 		Long: heredoc.Doc(`
 			Save a command template with optional tags for later execution.
 

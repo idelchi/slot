@@ -16,7 +16,7 @@ import (
 func Render() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "render <slot> [key=value...]",
-		Short: "Render a saved command slot",
+		Short: "Render a slot",
 		Long: heredoc.Doc(`
 			Render a saved command slot, substituting template variables with provided values.
 

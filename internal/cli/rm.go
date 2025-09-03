@@ -12,7 +12,7 @@ import (
 func Remove() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "rm <slot>",
-		Short:   "Delete a saved slot",
+		Short:   "Delete a slot",
 		Aliases: []string{"remove", "delete"},
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
