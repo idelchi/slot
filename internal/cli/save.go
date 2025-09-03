@@ -24,8 +24,9 @@ func Save() *cobra.Command {
 			Save a command template with optional tags for later execution.
 
 			Commands can include Go template variables like {{.file}} or {{.env}} that will be
-			replaced with values when running the slot.
+			replaced with values when rendering.
 		`),
+		//nolint:dupword	// False warning
 		Example: heredoc.Doc(`
 			# Save a simple command
 			slot save hello 'echo "Hello World!"'
