@@ -22,25 +22,25 @@ type Options struct {
 func Execute(version string) error {
 	root := &cobra.Command{
 		Use:   "slot",
-		Short: "Save and render named shell command slots",
+		Short: "Manage named shell command slots",
 		Long: heredoc.Doc(`
 			Slot is a CLI tool for managing named shell command slots with Go template substitution.
 
 			Save commands with Go template variables and tags, then render them with variable substitution.
-			Use shell completions to place rendered commands into your prompt for execution.
-			All operations are logged for audit purposes.
+			Use shell integration to place rendered commands into your prompt for execution.
 
-			Add 'eval $(slot init <shell>)' to your shell configuration to enable command substitution.
+			Add 'eval $(slot init <shell>)' to your shell configuration to enable command substitution
+			with 'slot run <slot>'.
 		`),
 		Example: heredoc.Doc(`
 			# Save a command with template variables
 			slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
 
 			# Render with variable substitution
-			slot run deploy --file=k8s.yml
+			slot render deploy file=k8s.yml
 
 			# Generate shell integration
-			slot init bash
+			slot init zsh
 
 			# List all slots
 			slot ls

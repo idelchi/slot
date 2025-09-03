@@ -67,7 +67,7 @@ func List() *cobra.Command {
 				fmt.Fprintf(writer, "%s\t%s\t%s\n", slot.Name, strings.Join(slot.Tags, ","), slot.Cmd)
 			}
 
-			fmt.Fprintf(writer, "\n[%s]\n", filepath.ToSlash(store.Path))
+			fmt.Fprintf(writer, "\n%s\n", filepath.ToSlash(store.Path))
 
 			return writer.Flush()
 		},
