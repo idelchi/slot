@@ -36,6 +36,9 @@ func Save() *cobra.Command {
 
 			# Overwrite existing slot
 			slot save deploy 'kubectl apply -f {{.file}} --namespace {{.ns}}' --force
+
+			# Save a slot that outputs the content of the slots file
+			slot save slots 'cat $(slot ls | tail -1)'
 		`),
 		Args: cobra.ExactArgs(SaveArgsCount),
 		RunE: func(cmd *cobra.Command, args []string) error {
