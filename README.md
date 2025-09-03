@@ -115,12 +115,17 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 
 </details>
 
+## Templating
+
+Supports basic `text/template` syntax as well as the functions provided by [slim-sprig](https://go-task.github.io/slim-sprig).
+
 ## Multiline commands
 
 For multiline commands, use either a `$`:
 
 ```sh
-slot save ls $'if [ "{{ .INPUT }}" = "true" ]; then\n  echo "{{ .OUTPUT }}";\nfi'
+# Save 'ls' as a multiline expression
+$ slot save ls $'if [ "{{ .INPUT }}" = "true" ]; then\n  echo "{{ .OUTPUT }}";\nfi'
 ```
 
 or edit the slot directly in the YAML file.
