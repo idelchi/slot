@@ -10,7 +10,7 @@ Save and render named shell commands with Go template substitution
 [![Build Status](https://github.com/idelchi/slot/actions/workflows/github-actions.yml/badge.svg)](https://github.com/idelchi/slot/actions/workflows/github-actions.yml/badge.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-`slot` is a command-line tool for managing and executing shell commands with ease.
+`slot` is a command-line tool for saving, organizing, and executing templated shell commands.
 
 - Save commands with Go template variables and tags for organization in a simple YAML file
 - Render commands with variable substitution using `KEY=VAL`
@@ -67,7 +67,7 @@ Generate shell integration snippets for command placement:
 $ slot init <shell>
 ```
 
-The integration enables the the `slot run` command which places rendered output
+The integration enables the `slot run` command which places rendered output
 into your shell prompt for editing before execution.
 
 Use `--yes/-y` to execute the rendered command directly without editing.
@@ -112,7 +112,7 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 
 - **Usage:** `slot init <bash|zsh> [flags]`
 - **Flags:**
-  - `--fzf` – Enable fzf integration (zsh only)
+  - `--fzf` – Enable fzf integration (zsh only, binds to Ctrl-X and Ctrl-Z keys)
 
 </details>
 
