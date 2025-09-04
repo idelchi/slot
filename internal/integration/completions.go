@@ -12,3 +12,8 @@ var Bash string
 //
 //go:embed zsh.sh
 var Zsh string
+
+// ZshFzf contains the zsh shell integration script with fzf support.
+//
+//go:embed zsh-fzf.sh
+var ZshFzf string

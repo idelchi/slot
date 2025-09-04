@@ -110,8 +110,9 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 <details>
 <summary><strong>init</strong> — Generate shell integration snippets</summary>
 
-- **Usage:** `slot init <shell>`
-- **Supported shells:** bash, zsh
+- **Usage:** `slot init <bash|zsh> [flags]`
+- **Flags:**
+  - `--fzf` – Enable fzf integration (zsh only)
 
 </details>
 

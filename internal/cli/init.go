@@ -12,6 +12,8 @@ import (
 
 // Init returns the cobra command for generating shell integration scripts.
 func Init() *cobra.Command {
+	var fzf bool
+
 	cmd := &cobra.Command{
 		Use:   "init <shell>",
 		Short: "Generate shell integration snippets",
@@ -35,12 +37,19 @@ func Init() *cobra.Command {
 			case "zsh":
 				fmt.Fprint(cmd.OutOrStdout(), integration.Zsh)
 
+				if fzf {
+					fmt.Fprint(cmd.OutOrStdout(), "\n")
+					fmt.Fprint(cmd.OutOrStdout(), integration.ZshFzf)
+				}
+
 				return nil
 			default:
 				return fmt.Errorf("unsupported shell %q (supported: %v)", shell, strings.Join(supported, ", "))
 			}
 		},
 	}
+
+	cmd.Flags().BoolVar(&fzf, "fzf", false, "enable fzf support and bind to Ctrl-X and Ctrl-Z keys (zsh only)")
 
 	return cmd
 }
