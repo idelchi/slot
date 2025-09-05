@@ -64,7 +64,10 @@ func List() *cobra.Command {
 			}
 
 			for _, item := range items {
-				fmt.Fprintf(writer, "%s\t%s\t%s\n", item.name, strings.Join(item.slot.Tags, ","), item.slot.Cmd)
+				// Replace newlines with ^J (caret notation for newline) for display
+				displayCmd := strings.ReplaceAll(item.slot.Cmd, "\n", "^J")
+				displayCmd = strings.TrimSpace(displayCmd)
+				fmt.Fprintf(writer, "%s\t%s\t%s\n", item.name, strings.Join(item.slot.Tags, ","), displayCmd)
 			}
 
 			fmt.Fprintf(writer, "\n%s\n", filepath.ToSlash(store.Path))
