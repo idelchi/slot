@@ -16,13 +16,6 @@ type Slot struct {
 // Slots is a slice of Slot structs.
 type Slots []Slot
 
-// index returns the index of the slot with the given name, or -1 if not found.
-func (s Slots) index(name string) int {
-	return slices.IndexFunc(s, func(slot Slot) bool {
-		return slot.Name == name
-	})
-}
-
 // Add adds a new slot..
 func (s *Slots) Add(slot Slot) {
 	*s = append(*s, slot)
@@ -53,4 +46,11 @@ func (s Slots) Get(name string) *Slot {
 	}
 
 	return &s[i]
+}
+
+// index returns the index of the slot with the given name, or -1 if not found.
+func (s Slots) index(name string) int {
+	return slices.IndexFunc(s, func(slot Slot) bool {
+		return slot.Name == name
+	})
 }
