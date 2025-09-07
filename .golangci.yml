@@ -17,6 +17,8 @@ linters:
     - err113
     # Most errors don't need additional wrapping
     - wrapcheck
+    # Allow using both ponter and non-pointer receivers
+    - recvcheck
 
   settings:
     wsl_v5:

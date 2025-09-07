@@ -39,19 +39,19 @@ kubectl apply -f k8s.yml
 
 ```sh
 # List all saved slots
-$ slot ls
+$ slot list
 NAME    TAGS     CMD
 deploy  k8s,prod kubectl apply -f {{.file}}
 ```
 
 ```sh
 # List slots filtered by tag
-$ slot ls --tag k8s
+$ slot list --tag k8s
 ```
 
 ```sh
 # Remove a slot
-$ slot rm deploy
+$ slot remove deploy
 ```
 
 ## Data Storage
@@ -92,18 +92,18 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 </details>
 
 <details>
-<summary><strong>ls</strong> — List saved slots</summary>
+<summary><strong>list/ls</strong> — List saved slots</summary>
 
-- **Usage:** `slot ls [flags]`
+- **Usage:** `slot list [flags]`
 - **Flags:**
   - `--tag` – Filter by tag (repeatable)
 
 </details>
 
 <details>
-<summary><strong>rm</strong> — Delete a saved slot</summary>
+<summary><strong>remove/rm</strong> — Delete a saved slot</summary>
 
-- **Usage:** `slot rm <name>`
+- **Usage:** `slot remove <name>`
 
 </details>
 
@@ -125,8 +125,12 @@ Supports basic `text/template` syntax as well as the functions provided by [slim
 For multiline commands, use either a `$`:
 
 ```sh
-# Save 'ls' as a multiline expression
-$ slot save ls $'if [ "{{ .INPUT }}" = "true" ]; then\n  echo "{{ .OUTPUT }}";\nfi'
+# Save 'echo' as a multiline expression
+$ slot save echo $'if [ "{{ .INPUT }}" = "true" ]; then\n  echo "{{ .OUTPUT }}";\nfi'
 ```
 
 or edit the slot directly in the YAML file.
+
+## Demo
+
+![Demo](assets/gifs/slot.gif)

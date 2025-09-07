@@ -11,9 +11,9 @@ import (
 // Remove returns the cobra command for removing command slots.
 func Remove() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "rm <slot>",
+		Use:     "remove <slot>",
 		Short:   "Delete a slot",
-		Aliases: []string{"remove", "delete"},
+		Aliases: []string{"rm"},
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			store, err := store.New()
@@ -27,11 +27,11 @@ func Remove() *cobra.Command {
 			}
 
 			slot := args[0]
-			if _, ok := database.Slots[slot]; !ok {
+			if !database.Exists(slot) {
 				return fmt.Errorf("no such slot %q", slot)
 			}
 
-			delete(database.Slots, slot)
+			database.Delete(slot)
 
 			if err := store.Save(database); err != nil {
 				return err

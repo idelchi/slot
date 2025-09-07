@@ -8,7 +8,7 @@ import (
 
 	"github.com/goccy/go-yaml"
 
-	"github.com/idelchi/slot/internal/model"
+	"github.com/idelchi/slot/internal/slots"
 )
 
 // Store handles persistent storage operations for slot data.
@@ -34,8 +34,8 @@ func New() (*Store, error) {
 }
 
 // Load reads the slot database from disk, returning an empty database if the file doesn't exist.
-func (store *Store) Load() (model.DB, error) {
-	database := model.DB{Slots: make(map[string]model.Slot)}
+func (store *Store) Load() (slots.Slots, error) {
+	database := slots.Slots{}
 
 	data, err := os.ReadFile(store.Path)
 	if err != nil {
@@ -54,7 +54,7 @@ func (store *Store) Load() (model.DB, error) {
 }
 
 // Save writes the slot database to disk.
-func (store *Store) Save(database model.DB) error {
+func (store *Store) Save(database slots.Slots) error {
 	data, err := yaml.MarshalWithOptions(database)
 	if err != nil {
 		return fmt.Errorf("marshalling slots: %w", err)
