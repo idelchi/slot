@@ -97,8 +97,9 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 - **Usage:** `slot list [flags]`
 - **Flags:**
   - `--tag` – Filter by tag (repeatable)
+  - `--tsv` – Output in TSV format
 
-</details>
+  </details>
 
 <details>
 <summary><strong>remove/rm</strong> — Delete a saved slot</summary>

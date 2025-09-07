@@ -29,21 +29,25 @@ func Execute(version string) error {
 			Save commands with Go template variables and tags, then render them with variable substitution.
 			Use shell integration to place rendered commands into your prompt for execution.
 
-			Add 'eval $(slot init <shell>)' to your shell configuration to enable command substitution
+			Add 'eval "$(slot init <shell>)"' to your shell configuration to enable command substitution
 			with 'slot run <slot>'.
 		`),
+		//nolint:dupword	// False warning
 		Example: heredoc.Doc(`
 			# Save a command with template variables
 			slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
 
+			# List all slots
+			slot list
+
 			# Render with variable substitution
 			slot render deploy file=k8s.yml
 
+			# Remove a slot
+			slot remove deploy
+
 			# Generate shell integration
 			slot init zsh
-
-			# List all slots
-			slot ls
 		`),
 		Version:       version,
 		SilenceErrors: true,
