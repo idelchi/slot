@@ -15,7 +15,10 @@ import (
 
 // List returns the cobra command for listing command slots.
 func List() *cobra.Command {
-	var filterTags []string
+	var (
+		filterTags []string
+		tsv        bool
+	)
 
 	cmd := &cobra.Command{
 		Use:   "list",
@@ -48,6 +51,32 @@ func List() *cobra.Command {
 
 			slots := filterSlotsByTags(database, filterTags)
 
+			// Machine-readable output for fzf/zsh parsing
+			if tsv {
+				if _, err := fmt.Fprintln(cmd.OutOrStdout(), "NAME\tTAGS\tCMD"); err != nil {
+					return err
+				}
+
+				// Deterministic TSV: name \t tags(csv) \t cmd(with \n escaped) \n
+				for _, slot := range slots {
+					cmdStr := strings.ReplaceAll(slot.Cmd, "\n", `\n`)
+					// No header, no footer/path line
+					_, err := fmt.Fprintf(
+						cmd.OutOrStdout(),
+						"%s\t%s\t%s\n",
+						slot.Name,
+						strings.Join(slot.Tags, ","),
+						cmdStr,
+					)
+					if err != nil {
+						return err
+					}
+				}
+
+				return nil
+			}
+
+			// Human-readable table (default)
 			writer := tabwriter.NewWriter(cmd.OutOrStdout(), 0, 0, TabSpacing, ' ', 0)
 			if _, err := fmt.Fprintln(writer, "NAME\tTAGS\tCMD"); err != nil {
 				return err
@@ -67,6 +96,7 @@ func List() *cobra.Command {
 	}
 
 	cmd.Flags().StringSliceVar(&filterTags, "tag", nil, "filter by tag (repeatable)")
+	cmd.Flags().BoolVar(&tsv, "tsv", false, "output in TSV format")
 
 	return cmd
 }

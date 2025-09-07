@@ -48,7 +48,8 @@ Type '# Use fzf integration (ctrl-X)'
 Enter
 Ctrl+X
 Sleep 2s
-Down
+Type 'di'
+# Down
 Sleep 2s
 Enter
 
