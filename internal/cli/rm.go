@@ -27,11 +27,11 @@ func Remove() *cobra.Command {
 			}
 
 			slot := args[0]
-			if _, ok := database.Slots[slot]; !ok {
+			if !database.Exists(slot) {
 				return fmt.Errorf("no such slot %q", slot)
 			}
 
-			delete(database.Slots, slot)
+			database.Delete(slot)
 
 			if err := store.Save(database); err != nil {
 				return err

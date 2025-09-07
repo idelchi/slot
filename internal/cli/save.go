@@ -6,7 +6,7 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 
-	"github.com/idelchi/slot/internal/model"
+	"github.com/idelchi/slot/internal/slots"
 	"github.com/idelchi/slot/internal/store"
 )
 
@@ -52,25 +52,24 @@ func Save() *cobra.Command {
 				return err
 			}
 
-			if database.Slots == nil {
-				database.Slots = make(map[string]model.Slot)
-			}
-
 			slot, rawCommand := args[0], args[1]
-			if _, exists := database.Slots[slot]; exists && !force {
+			if database.Exists(slot) && !force {
 				return fmt.Errorf("slot %q exists (use --force)", slot)
 			}
 
-			database.Slots[slot] = model.Slot{
+			database.Delete(slot)
+
+			database.Add(slots.Slot{
+				Name: slot,
 				Cmd:  rawCommand,
 				Tags: tags,
-			}
+			})
 
 			if err := store.Save(database); err != nil {
 				return err
 			}
 
-			fmt.Fprintf(cmd.OutOrStdout(), "saved %s\n", slot)
+			fmt.Fprintf(cmd.OutOrStdout(), "saved %q\n", slot)
 
 			return nil
 		},

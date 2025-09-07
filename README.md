@@ -130,3 +130,7 @@ $ slot save ls $'if [ "{{ .INPUT }}" = "true" ]; then\n  echo "{{ .OUTPUT }}";\n
 ```
 
 or edit the slot directly in the YAML file.
+
+## Demo
+
+![Demo](assets/gifs/slot.gif)

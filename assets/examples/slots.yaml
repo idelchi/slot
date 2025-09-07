@@ -1,0 +1,16 @@
+- name: sysinfo
+  cmd: |
+    echo "User: $(whoami)"
+    echo "Date: $(date)"
+
+- name: disk
+  cmd: df -h
+
+- name: processes
+  cmd: ps aux
+
+- name: ports
+  cmd: netstat -tuln
+
+- name: hello
+  cmd: echo "Hello World!"

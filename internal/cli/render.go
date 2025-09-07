@@ -44,8 +44,7 @@ func Render() *cobra.Command {
 			}
 
 			slot := args[0]
-			_, ok := database.Slots[slot]
-			if !ok {
+			if !database.Exists(slot) {
 				return fmt.Errorf("no such slot %q", slot)
 			}
 
@@ -55,7 +54,7 @@ func Render() *cobra.Command {
 				return err
 			}
 
-			rendered, err := render.Apply(database.Slots[slot].Cmd, variables)
+			rendered, err := render.Apply(database.Get(slot).Cmd, variables)
 			if err != nil {
 				return err
 			}
