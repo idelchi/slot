@@ -1,7 +1,7 @@
 Output gifs/slot.gif
 
 Set Theme "iTerm2 Default"
-Set FontSize 16
+Set FontSize 14
 Set Width 800
 Set Height 800
 Set TypingSpeed 50ms
