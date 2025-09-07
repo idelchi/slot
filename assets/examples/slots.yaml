@@ -13,4 +13,6 @@
   cmd: netstat -tuln
 
 - name: hello
+  tags:
+    - echo
   cmd: echo "Hello World!"

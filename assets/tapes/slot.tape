@@ -4,7 +4,7 @@ Set Theme "iTerm2 Default"
 Set FontSize 14
 Set Width 800
 Set Height 700
-Set TypingSpeed 100ms
+Set TypingSpeed 75ms
 
 Set Shell zsh
 Env ZSH_AUTOSUGGEST_MANUAL_REBIND "1"
