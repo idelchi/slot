@@ -18,22 +18,22 @@ func List() *cobra.Command {
 	var filterTags []string
 
 	cmd := &cobra.Command{
-		Use:   "ls",
+		Use:   "list",
 		Short: "List saved slots",
 		Long: heredoc.Doc(`
 			List all saved command slots with their names, tags, and commands.
 		`),
 		Example: heredoc.Doc(`
 			# List all slots in table format
-			slot ls
+			slot list
 
 			# Show only slots tagged with 'k8s'
-			slot ls --tag k8s
+			slot list --tag k8s
 
 			# Multiple tag filters (AND logic)
-			slot ls --tag k8s --tag prod
+			slot list --tag k8s --tag prod
 		`),
-		Aliases: []string{"list"},
+		Aliases: []string{"ls"},
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			store, err := store.New()
