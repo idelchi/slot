@@ -3,7 +3,7 @@ Output gifs/slot.gif
 Set Theme "iTerm2 Default"
 Set FontSize 14
 Set Width 800
-Set Height 800
+Set Height 700
 Set TypingSpeed 50ms
 
 Set Shell zsh
