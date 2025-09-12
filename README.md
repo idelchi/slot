@@ -113,7 +113,7 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 
 - **Usage:** `slot init <bash|zsh> [flags]`
 - **Flags:**
-  - `--fzf` – Enable fzf integration (zsh only, binds to Ctrl-X and Ctrl-Z keys)
+  - `--fzf` – Enable fzf integration (binds to Ctrl-X and Ctrl-Z keys)
 
 </details>
 

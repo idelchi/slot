@@ -29,23 +29,28 @@ func Init() *cobra.Command {
 
 			shell := args[0]
 
+			inits := []string{}
+
 			switch shell {
 			case "bash":
-				fmt.Fprint(cmd.OutOrStdout(), integration.Bash)
-
-				return nil
-			case "zsh":
-				fmt.Fprint(cmd.OutOrStdout(), integration.Zsh)
+				inits = append(inits, integration.Bash)
 
 				if fzf {
-					fmt.Fprint(cmd.OutOrStdout(), "\n")
-					fmt.Fprint(cmd.OutOrStdout(), integration.ZshFzf)
+					inits = append(inits, integration.BashFzf)
 				}
+			case "zsh":
+				inits = append(inits, integration.Zsh)
 
-				return nil
+				if fzf {
+					inits = append(inits, integration.ZshFzf)
+				}
 			default:
 				return fmt.Errorf("unsupported shell %q (supported: %v)", shell, strings.Join(supported, ", "))
 			}
+
+			_, err := fmt.Fprintln(cmd.OutOrStdout(), strings.Join(inits, "\n"))
+
+			return err
 		},
 	}
 
