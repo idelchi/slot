@@ -47,6 +47,7 @@ func Init() *cobra.Command {
 			default:
 				return fmt.Errorf("unsupported shell %q (supported: %v)", shell, strings.Join(supported, ", "))
 			}
+
 			_, err := fmt.Fprintln(cmd.OutOrStdout(), strings.Join(inits, "\n"))
 
 			return err
