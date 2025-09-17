@@ -21,7 +21,6 @@ slot() {
     rc=$?
 
     if (( rc != 0 )); then
-      # If the app printed its error to STDOUT, surface it.
       [[ -n "${rendered}" ]] && print -u2 -- "${rendered}"
       return ${rc}
     fi
@@ -29,7 +28,7 @@ slot() {
     [[ -z "${rendered}" ]] && return 0
 
     if (( do_exec )); then
-      eval "${rendered}"         # no history push
+      eval "${rendered}"
     else
       print -z -- "${rendered}" 2>/dev/null || print -r -- "${rendered}"
     fi

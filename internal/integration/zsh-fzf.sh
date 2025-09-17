@@ -1,11 +1,17 @@
-# slot key-bindings for Ctrl-X and Ctrl-Z using fzf
+# slot key-bindings for Ctrl-X (using fzf) and Ctrl-Z
 zmodload zsh/zle
 
 # Ctrl-Y: run command in buffer as a slot
 slot-run-buffer() {
   emulate -L zsh
   local buf="${BUFFER//$'\n'/ }"
-  [[ -z "${buf}" ]] && { zle -M "slot: buffer empty"; return 0; }
+
+  if [[ -z $buf ]]; then
+    zle -I
+    print -r -- "no slot selected"
+    return 0
+  fi
+
   BUFFER="slot run -y -- ${buf}"
   zle accept-line
 }
@@ -37,7 +43,7 @@ slot-pick-and-run() {
   choice=${out#*$'\n'}
   [[ -z $choice || $choice = "$key" ]] && { zle reset-prompt; return }
 
-  fields=("${(@ps:\t:)choice}")   # [1]=NAME [2]=TAGS [3]=CMD(\n escaped)
+  fields=("${(@ps:\t:)choice}")
   name=${fields[1]}
   cmd=${fields[3]//\\n/$'\n'}
 

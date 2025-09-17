@@ -1,6 +1,5 @@
-# slot key-bindings for Ctrl-X and Ctrl-Z using fzf
+# slot key-bindings for Ctrl-X (using fzf) and Ctrl-Z
 
-# emulate "accept-line" for bash
 __slot_eval_prompt() {
   if ((BASH_VERSINFO[0] > 4 || (BASH_VERSINFO[0] == 4 && BASH_VERSINFO[1] >= 4))); then
     local p=${PS1@P}
@@ -33,7 +32,10 @@ __slot_accept_line() {
 # Ctrl-Y: run command in buffer as a slot
 slot_run_buffer() {
   local buf=${READLINE_LINE//$'\n'/ }
-  [[ -z "${buf}" ]] && return 0
+  if [[ -z "$buf" ]]; then
+    echo "no slot selected"
+    return 0
+  fi
   __slot_accept_line "slot run -y -- ${buf}"
   READLINE_LINE=
   READLINE_POINT=0
@@ -74,7 +76,6 @@ slot_pick_and_run() {
   READLINE_POINT=${#READLINE_LINE}
 }
 
-# key bindings (disable suspend so ^Z is available)
 stty susp undef 2>/dev/null || true
 bind -r '\C-z' 2>/dev/null || true
 bind -x '"\C-z": slot_run_buffer'
