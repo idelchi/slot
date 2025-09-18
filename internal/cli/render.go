@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"path/filepath"
 	"strings"
 
 	"github.com/MakeNowJust/heredoc/v2"
@@ -53,6 +54,8 @@ func Render() *cobra.Command {
 			if err != nil {
 				return err
 			}
+
+			variables["SLOTS_FILE"] = filepath.ToSlash(store.Path)
 
 			rendered, err := render.Apply(database.Get(slot).Cmd, variables)
 			if err != nil {

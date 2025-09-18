@@ -121,6 +121,8 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 
 Supports basic `text/template` syntax as well as the functions provided by [slim-sprig](https://go-task.github.io/slim-sprig).
 
+The special `SLOTS_FILE` variable contains the path to the slots YAML file with forward slashes (e.g. `/home/user/.config/slot/slots.yaml`).
+
 ## Multiline commands
 
 For multiline commands, use either a `$`:
