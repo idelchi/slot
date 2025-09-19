@@ -5,13 +5,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// Constants for CLI configuration.
-const (
-	KeyValueParts = 2
-	TabSpacing    = 2
-	SaveArgsCount = 2
-)
-
 // Options represents the root level configuration for the CLI application.
 type Options struct {
 	// Verbose enables verbose output.
@@ -68,6 +61,7 @@ func Execute(version string) error {
 		Render(),
 		List(),
 		Remove(),
+		Path(),
 		Init(),
 	)
 

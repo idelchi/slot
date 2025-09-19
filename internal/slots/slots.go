@@ -1,12 +1,18 @@
 // Package slots defines the data structures for slot command storage.
 package slots
 
-import "slices"
+import (
+	"fmt"
+	"io"
+	"slices"
+)
 
 // Slot represents a saved command with metadata.
 type Slot struct {
 	// Name is the unique identifier for the slot.
 	Name string
+	// Description provides a brief explanation of the slot's purpose.
+	Description string `json:"description,omitempty"`
 	// Cmd is the command template with placeholders.
 	Cmd string
 	// Tags are optional labels for organizing slots.
@@ -46,6 +52,18 @@ func (s Slots) Get(name string) *Slot {
 	}
 
 	return &s[i]
+}
+
+// Render outputs the slots in the specified format ("table" or "tsv") to the given writer.
+func (s Slots) Render(format string, writer io.Writer) error {
+	switch format {
+	case "table":
+		return asTable(s, writer)
+	case "tsv":
+		return asTSV(s, writer)
+	default:
+		return fmt.Errorf("unknown format: %q", format)
+	}
 }
 
 // index returns the index of the slot with the given name, or -1 if not found.

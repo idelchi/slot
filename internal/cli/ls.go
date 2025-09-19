@@ -1,11 +1,6 @@
 package cli
 
 import (
-	"fmt"
-	"path/filepath"
-	"strings"
-	"text/tabwriter"
-
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 
@@ -51,47 +46,11 @@ func List() *cobra.Command {
 
 			slots := filterSlotsByTags(database, filterTags)
 
-			// Machine-readable output for fzf/zsh parsing
 			if tsv {
-				if _, err := fmt.Fprintln(cmd.OutOrStdout(), "NAME\tTAGS\tCMD"); err != nil {
-					return err
-				}
-
-				// Deterministic TSV: name \t tags(csv) \t cmd(with \n escaped) \n
-				for _, slot := range slots {
-					cmdStr := strings.ReplaceAll(slot.Cmd, "\n", `\n`)
-					// No header, no footer/path line
-					_, err := fmt.Fprintf(
-						cmd.OutOrStdout(),
-						"%s\t%s\t%s\n",
-						slot.Name,
-						strings.Join(slot.Tags, ","),
-						cmdStr,
-					)
-					if err != nil {
-						return err
-					}
-				}
-
-				return nil
+				return slots.Render("tsv", cmd.OutOrStdout())
 			}
 
-			// Human-readable table (default)
-			writer := tabwriter.NewWriter(cmd.OutOrStdout(), 0, 0, TabSpacing, ' ', 0)
-			if _, err := fmt.Fprintln(writer, "NAME\tTAGS\tCMD"); err != nil {
-				return err
-			}
-
-			for _, slot := range slots {
-				// Replace newlines with ^J (caret notation for newline) for display
-				displayCmd := strings.ReplaceAll(slot.Cmd, "\n", "^J")
-				displayCmd = strings.TrimSpace(displayCmd)
-				fmt.Fprintf(writer, "%s\t%s\t%s\n", slot.Name, strings.Join(slot.Tags, ","), displayCmd)
-			}
-
-			fmt.Fprintf(writer, "\n%s\n", filepath.ToSlash(store.Path))
-
-			return writer.Flush()
+			return slots.Render("table", cmd.OutOrStdout())
 		},
 	}
 

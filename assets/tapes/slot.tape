@@ -14,7 +14,7 @@ Env ZSH_AUTOSUGGEST_ENABLED "0"
 Hide
 Type 'mkdir -p ~/.config/slot'
 Enter
-Type 'cp ~/slots.yaml ~/.config/slot/slots.yaml'
+Type 'cp ~/assets/examples/slots.yaml ~/.config/slot/slots.yaml'
 Enter
 Type 'eval "$(slot init zsh --fzf)"'
 Enter

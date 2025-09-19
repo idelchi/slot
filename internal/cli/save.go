@@ -40,7 +40,7 @@ func Save() *cobra.Command {
 			# Save a slot that outputs the content of the slots file
 			slot save slots 'cat $(slot ls | tail -1)'
 		`),
-		Args: cobra.ExactArgs(SaveArgsCount),
+		Args: cobra.ExactArgs(2), //nolint:mnd   // Clear from the context
 		RunE: func(cmd *cobra.Command, args []string) error {
 			store, err := store.New()
 			if err != nil {

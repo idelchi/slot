@@ -31,12 +31,17 @@ slot-pick-and-run() {
       --prompt="slot> " \
       --height=40% \
       --layout=reverse-list \
-      --header $'ENTER: run  TAB: insert slot  SHIFT-TAB: insert CMD' \
+      --header $'ENTER: run  TAB: insert slot  SHIFT-TAB: insert CMD  CTRL-SPACE: insert rendered cmd  CTRL-R: toggle preview' \
       --header-lines=1 \
       --delimiter=$'\t' \
-      --with-nth=1,2,3 \
+      --nth=1,2,3,4 \
+      --with-nth=1,3,4 \
       --tabstop=16 \
-      --expect=enter,tab,btab
+      --preview 'printf "%s\n" {2} | sed -e "s/\\^J/\n/g" -e "s/\\\\n/\n/g"' \
+      --preview-window=25% \
+      --bind 'ctrl-r:toggle-preview' \
+      --style=full \
+      --expect=enter,tab,btab,ctrl-space
   ) || { zle reset-prompt; return }
 
   key=${out%%$'\n'*}
@@ -45,12 +50,14 @@ slot-pick-and-run() {
 
   fields=("${(@ps:\t:)choice}")
   name=${fields[1]}
-  cmd=${fields[3]//\\n/$'\n'}
+  cmd=${fields[2]//\\n/$'\n'}
+  cmd=${cmd//^J/$'\n'}
 
   case $key in
     enter) BUFFER="slot run -y -- ${name}"; zle accept-line; return ;;
     tab)   BUFFER="slot run -y -- ${name}" ;;
     btab)  BUFFER="${cmd}" ;;
+    ctrl-space) BUFFER="$(slot render -- ${name})" ;;
   esac
 
   CURSOR=${#BUFFER}

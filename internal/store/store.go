@@ -55,9 +55,24 @@ func (store *Store) Load() (slots.Slots, error) {
 
 // Save writes the slot database to disk.
 func (store *Store) Save(database slots.Slots) error {
-	data, err := yaml.MarshalWithOptions(database)
-	if err != nil {
-		return fmt.Errorf("marshalling slots: %w", err)
+	data := []byte{}
+
+	for _, slot := range database {
+		slots := []slots.Slot{slot}
+
+		slot, err := yaml.MarshalWithOptions(slots)
+		if err != nil {
+			return fmt.Errorf("marshalling slots: %w", err)
+		}
+
+		data = append(data, slot...)
+
+		data = append(data, '\n')
+	}
+
+	// Trim the last newline
+	if len(data) > 0 {
+		data = data[:len(data)-1]
 	}
 
 	if err := os.WriteFile(store.Path, data, 0o600); err != nil {
