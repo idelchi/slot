@@ -1,18 +1,23 @@
 - name: sysinfo
+  description: Display system information including user and date.
   cmd: |
     echo "User: $(whoami)"
     echo "Date: $(date)"
 
 - name: disk
+  description: Display disk usage in a human-readable format.
   cmd: df -h
 
 - name: processes
+  description: List all running processes.
   cmd: ps aux
 
 - name: ports
+  description: List all listening network ports.
   cmd: netstat -tuln
 
 - name: hello
+  description: Print "Hello World!" to the console.
   tags:
     - echo
   cmd: echo "Hello World!"
