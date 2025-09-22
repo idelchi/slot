@@ -1,23 +1,31 @@
 - name: sysinfo
-  description: Display system information including user and date.
+  description: System information
   cmd: |
     echo "User: $(whoami)"
     echo "Date: $(date)"
+  tags:
+    - sys
 
 - name: disk
-  description: Display disk usage in a human-readable format.
+  description: Disk usage
   cmd: df -h
+  tags:
+    - sys
+    - usage
 
 - name: processes
-  description: List all running processes.
+  description: Running processes
   cmd: ps aux
+  tags:
+    - sys
 
 - name: ports
-  description: List all listening network ports.
+  description: Listening network ports
   cmd: netstat -tuln
-
-- name: hello
-  description: Print "Hello World!" to the console.
-  cmd: echo "Hello World!"
   tags:
-    - echo
+    - sys
+    - network
+
+- name: view
+  description: Slots configuration file
+  cmd: cat "{{ .SLOTS_FILE }}"
