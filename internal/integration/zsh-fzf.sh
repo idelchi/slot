@@ -12,7 +12,7 @@ slot-run-buffer() {
     return 0
   fi
 
-  BUFFER="slot run -y -- ${buf}"
+  BUFFER="slot run -y ${buf}"
   zle accept-line
 }
 zle -N slot-run-buffer

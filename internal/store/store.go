@@ -57,7 +57,7 @@ func (store Store) Save(slots slot.Slots) error {
 	data := []byte{}
 
 	for i := range slots {
-		slot, err := yaml.MarshalWithOptions(slots.Slice(i, i+1))
+		slot, err := yaml.MarshalWithOptions(slots.Slice(i, i+1), yaml.UseLiteralStyleIfMultiline(true))
 		if err != nil {
 			return fmt.Errorf("marshalling slots: %w", err)
 		}

@@ -26,7 +26,7 @@ curl -sSL https://raw.githubusercontent.com/idelchi/slot/refs/heads/main/install
 
 ```sh
 # Save a command with Go template variables
-$ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod --description 'apply file with kubectl'
+$ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod --description 'deploy to prod'
 ```
 
 ```sh
@@ -39,7 +39,7 @@ kubectl apply -f k8s.yml
 # List all saved slots
 $ slot list
 NAME    CMD                         TAGS      DESCRIPTION
-deploy  kubectl apply -f {{.file}}  k8s,prod  apply file with kubect
+deploy  kubectl apply -f {{.file}}  k8s,prod  deploy to prod
 ```
 
 ```sh
@@ -129,17 +129,6 @@ In addition to your own `key=value` arguments, the following variables are alway
 - **`CLI_ARGS_SPLIT`** – Same arguments as above, but preserved as a list (`[]string`) for iteration
 
 All templates use Go’s [`text/template`](https://pkg.go.dev/text/template) syntax, with extra functions from [slim-sprig](https://go-task.github.io/slim-sprig).
-
-## Multiline commands
-
-For multiline commands, use either a `$`:
-
-```sh
-# Save 'echo' as a multiline expression
-$ slot save echo $'if [ "{{ .INPUT }}" = "true" ]; then\n  echo "{{ .OUTPUT }}";\nfi'
-```
-
-or edit the slot directly in the YAML file.
 
 ## Demo
 

@@ -18,6 +18,6 @@
 
 - name: hello
   description: Print "Hello World!" to the console.
+  cmd: echo "Hello World!"
   tags:
     - echo
-  cmd: echo "Hello World!"

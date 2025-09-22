@@ -36,7 +36,7 @@ slot_run_buffer() {
     echo "no slot selected"
     return 0
   fi
-  __slot_accept_line "slot run -y -- ${buf}"
+  __slot_accept_line "slot run -y ${buf}"
   READLINE_LINE=
   READLINE_POINT=0
 }
