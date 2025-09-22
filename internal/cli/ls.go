@@ -4,12 +4,12 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 
-	"github.com/idelchi/slot/internal/slots"
+	"github.com/idelchi/slot/internal/slot"
 	"github.com/idelchi/slot/internal/store"
 )
 
 // List returns the cobra command for listing command slots.
-func List() *cobra.Command {
+func List(config *string) *cobra.Command {
 	var (
 		filterTags []string
 		tsv        bool
@@ -34,41 +34,50 @@ func List() *cobra.Command {
 		Aliases: []string{"ls"},
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			store, err := store.New()
+			store, err := store.New(*config)
 			if err != nil {
 				return err
 			}
 
-			database, err := store.Load()
+			slots, err := store.Load()
 			if err != nil {
 				return err
 			}
 
-			slots := filterSlotsByTags(database, filterTags)
+			slots = filterSlotsByTags(slots, filterTags)
 
 			if tsv {
 				return slots.Render("tsv", cmd.OutOrStdout())
+			}
+
+			// Truncate the commands if longer than 50 characters
+			const maxCmdLength = 50
+
+			for i, s := range slots {
+				if len(s.Cmd) > maxCmdLength {
+					slots[i].Cmd = s.Cmd[:maxCmdLength] + "..."
+				}
 			}
 
 			return slots.Render("table", cmd.OutOrStdout())
 		},
 	}
 
-	cmd.Flags().StringSliceVar(&filterTags, "tag", nil, "filter by tag (repeatable)")
+	cmd.Flags().StringSliceVar(&filterTags, "tags", nil, "filter by tags (repeatable)")
 	cmd.Flags().BoolVar(&tsv, "tsv", false, "output in TSV format")
 
 	return cmd
 }
 
 // filterSlotsByTags returns slots that contain all specified tags.
-func filterSlotsByTags(database slots.Slots, filterTags []string) slots.Slots {
+func filterSlotsByTags(slots slot.Slots, filterTags []string) slot.Slots {
 	if len(filterTags) == 0 {
-		return database
+		return slots
 	}
 
-	var result slots.Slots
+	var result slot.Slots
 
-	for _, slot := range database {
+	for _, slot := range slots {
 		hasAllTags := true
 
 		for _, filterTag := range filterTags {

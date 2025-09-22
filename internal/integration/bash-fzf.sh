@@ -75,10 +75,10 @@ slot_pick_and_run() {
   cmd=${cmd//^J/$'\n'}
 
   case $key in
-    enter) __slot_accept_line "slot run -y -- ${name}"; READLINE_LINE=; READLINE_POINT=0; return ;;
-    tab)   READLINE_LINE="slot run -y -- ${name}" ;;
+    enter) __slot_accept_line "slot run -y ${name}"; READLINE_LINE=; READLINE_POINT=0; return ;;
+    tab)   READLINE_LINE="slot run -y ${name}" ;;
     btab)  READLINE_LINE="${cmd}" ;;
-    ctrl-space) READLINE_LINE="$(slot render -- ${name})" ;;
+    ctrl-space) READLINE_LINE="$(slot render ${name})" ;;
   esac
 
   READLINE_POINT=${#READLINE_LINE}

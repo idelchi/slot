@@ -17,7 +17,7 @@ linters:
     - err113
     # Most errors don't need additional wrapping
     - wrapcheck
-    # Allow using both ponter and non-pointer receivers
+    # Allow using both pointer and non-pointer receivers
     - recvcheck
 
   settings:

@@ -1,15 +1,13 @@
 package cli
 
 import (
+	"os"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
-)
 
-// Options represents the root level configuration for the CLI application.
-type Options struct {
-	// Verbose enables verbose output.
-	Verbose bool
-}
+	"github.com/idelchi/slot/internal/store"
+)
 
 // Execute runs the root command for the slot CLI application.
 func Execute(version string) error {
@@ -24,6 +22,8 @@ func Execute(version string) error {
 
 			Add 'eval "$(slot init <shell>)"' to your shell configuration to enable command substitution
 			with 'slot run <slot>'.
+
+			"slot init <shell> --fzf" allows for further key-bindings to Ctrl-Z and Ctrl-X.
 		`),
 		//nolint:dupword	// False warning
 		Example: heredoc.Doc(`
@@ -56,12 +56,19 @@ func Execute(version string) error {
 	root.CompletionOptions.DisableDefaultCmd = true
 	cobra.EnableCommandSorting = false
 
+	config := os.Getenv("SLOTS_FILE")
+	if config == "" {
+		config, _ = store.DefaultSlotsFile()
+	}
+
+	root.PersistentFlags().StringVar(&config, "config", config, "path to the configuration file")
+
 	root.AddCommand(
-		Save(),
-		Render(),
-		List(),
-		Remove(),
-		Path(),
+		Save(&config),
+		Render(&config),
+		List(&config),
+		Remove(&config),
+		Path(&config),
 		Init(),
 	)
 

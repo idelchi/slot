@@ -1,6 +1,7 @@
 package cli
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/spf13/cobra"
@@ -9,31 +10,35 @@ import (
 )
 
 // Remove returns the cobra command for removing command slots.
-func Remove() *cobra.Command {
+func Remove(config *string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "remove <slot>",
 		Short:   "Delete a slot",
 		Aliases: []string{"rm"},
 		Args:    cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			store, err := store.New()
+			store, err := store.New(*config)
 			if err != nil {
 				return err
 			}
 
-			database, err := store.Load()
+			slots, err := store.Load()
 			if err != nil {
 				return err
+			}
+
+			if len(slots) == 0 {
+				return errors.New("no slots to remove")
 			}
 
 			slot := args[0]
-			if !database.Exists(slot) {
-				return fmt.Errorf("no such slot %q", slot)
+			if !slots.Exists(slot) {
+				return fmt.Errorf("no such slot %q: did you mean %q?", slot, slots.Closest(slot))
 			}
 
-			database.Delete(slot)
+			slots.Delete(slot)
 
-			if err := store.Save(database); err != nil {
+			if err := store.Save(slots); err != nil {
 				return err
 			}
 

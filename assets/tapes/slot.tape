@@ -47,7 +47,6 @@ Enter
 Ctrl+X
 Sleep 2s
 Type 'di'
-# Down
 Sleep 2s
 Enter
 

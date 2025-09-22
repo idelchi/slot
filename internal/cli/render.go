@@ -3,6 +3,7 @@ package cli
 import (
 	"errors"
 	"fmt"
+	"maps"
 	"path/filepath"
 	"strings"
 
@@ -14,7 +15,7 @@ import (
 )
 
 // Render returns the cobra command for rendering command slots.
-func Render() *cobra.Command {
+func Render(config *string) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "render <slot> [key=value...]",
 		Short: "Render a slot",
@@ -34,30 +35,47 @@ func Render() *cobra.Command {
 		`),
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			store, err := store.New()
+			args, afterDash := splitAtDash(cmd, args)
+			if len(args) < 1 {
+				return errors.New("requires at least 1 arg(s), only received 0")
+			}
+
+			store, err := store.New(*config)
 			if err != nil {
 				return err
 			}
 
-			database, err := store.Load()
+			slots, err := store.Load()
 			if err != nil {
 				return err
+			}
+
+			if len(slots) == 0 {
+				return errors.New("no slots to render")
 			}
 
 			slot := args[0]
-			if !database.Exists(slot) {
-				return fmt.Errorf("no such slot %q", slot)
+			if !slots.Exists(slot) {
+				return fmt.Errorf("no such slot %q: did you mean %q?", slot, slots.Closest(slot))
 			}
 
-			withs := args[1:]
-			variables, err := parseWiths(withs)
+			variables := map[string]any{}
+
+			variables["SLOTS_FILE"] = filepath.ToSlash(store.Path())
+			variables["SLOTS_DIR"] = filepath.ToSlash(filepath.Dir(store.Path()))
+			variables["CLI_ARGS"] = strings.Join(afterDash, " ")
+
+			withs, err := parseWiths(args[1:])
 			if err != nil {
 				return err
 			}
 
-			variables["SLOTS_FILE"] = filepath.ToSlash(store.Path)
+			maps.Copy(variables, withs)
 
-			rendered, err := render.Apply(database.Get(slot).Cmd, variables)
+			//nolint:errcheck,forcetypeassert  // args are always strings
+			variables["CLI_ARGS_SPLIT"] = strings.Split(variables["CLI_ARGS"].(string), " ")
+
+			rendered, err := render.Apply(slots.Get(slot).Cmd, variables)
 			if err != nil {
 				return err
 			}
@@ -74,10 +92,10 @@ func Render() *cobra.Command {
 }
 
 // parseWiths parses key=value pairs into a key-value map.
-func parseWiths(keyValues []string) (map[string]string, error) {
+func parseWiths(keyValues []string) (map[string]any, error) {
 	var errs []error
 
-	out := make(map[string]string)
+	out := make(map[string]any)
 
 	for _, keyValue := range keyValues {
 		key, value, found := strings.Cut(keyValue, "=")
@@ -98,4 +116,14 @@ func parseWiths(keyValues []string) (map[string]string, error) {
 	}
 
 	return out, errors.Join(errs...)
+}
+
+// splitAtDash splits args at the first occurrence of "--".
+func splitAtDash(cmd *cobra.Command, args []string) (beforeDash, afterDash []string) {
+	n := cmd.ArgsLenAtDash()
+	if n >= 0 {
+		return args[:n], args[n:]
+	}
+
+	return args, nil
 }

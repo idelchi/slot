@@ -18,8 +18,6 @@ Save and render named shell commands with Go template substitution
 
 ## Installation
 
-For a quick installation, you can use the provided installation script:
-
 ```sh
 curl -sSL https://raw.githubusercontent.com/idelchi/slot/refs/heads/main/install.sh | sh -s -- -d ~/.local/bin
 ```
@@ -28,7 +26,7 @@ curl -sSL https://raw.githubusercontent.com/idelchi/slot/refs/heads/main/install
 
 ```sh
 # Save a command with Go template variables
-$ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
+$ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod --description 'apply file with kubectl'
 ```
 
 ```sh
@@ -40,13 +38,13 @@ kubectl apply -f k8s.yml
 ```sh
 # List all saved slots
 $ slot list
-NAME    TAGS     CMD
-deploy  k8s,prod kubectl apply -f {{.file}}
+NAME    CMD                         TAGS      DESCRIPTION
+deploy  kubectl apply -f {{.file}}  k8s,prod  apply file with kubect
 ```
 
 ```sh
-# List slots filtered by tag
-$ slot list --tag k8s
+# List slots filtered by tags
+$ slot list --tags k8s
 ```
 
 ```sh
@@ -56,7 +54,8 @@ $ slot remove deploy
 
 ## Data Storage
 
-Slots are stored in YAML format at `~/.config/slot/slots.yaml`.
+Slots are stored in YAML format at `~/.config/slot/slots.yaml`. Location can be overridden with the
+`--config` flag or `SLOTS_FILE` environment variable.
 
 ## Shell Integration
 
@@ -72,6 +71,8 @@ into your shell prompt for editing before execution.
 
 Use `--yes/-y` to execute the rendered command directly without editing.
 
+Adding the `--fzf` flag enables further integration, binding `Ctrl-X` and `Ctrl-Z` keys to running or searching slots.
+
 ## Commands
 
 <details>
@@ -80,6 +81,7 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 - **Usage:** `slot save <name> <command> [flags]`
 - **Flags:**
   - `--tags` – Tags for the slot (repeatable)
+  - `--description` – Description for the slot
   - `--force` – Overwrite existing slot
 
 </details>
@@ -96,7 +98,7 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 
 - **Usage:** `slot list [flags]`
 - **Flags:**
-  - `--tag` – Filter by tag (repeatable)
+  - `--tags` – Filter by tags (repeatable)
   - `--tsv` – Output in TSV format
 
   </details>
@@ -119,9 +121,14 @@ Use `--yes/-y` to execute the rendered command directly without editing.
 
 ## Templating
 
-Supports basic `text/template` syntax as well as the functions provided by [slim-sprig](https://go-task.github.io/slim-sprig).
+In addition to your own `key=value` arguments, the following variables are always available inside templates:
 
-The special `SLOTS_FILE` variable contains the path to the slots YAML file with forward slashes (e.g. `/home/user/.config/slot/slots.yaml`).
+- **`SLOTS_FILE`** – Full path to the slots YAML file
+- **`SLOTS_DIR`** – Directory containing the slots YAML file
+- **`CLI_ARGS`** – All arguments after `--`, joined into a single space-delimited string
+- **`CLI_ARGS_SPLIT`** – Same arguments as above, but preserved as a list (`[]string`) for iteration
+
+All templates use Go’s [`text/template`](https://pkg.go.dev/text/template) syntax, with extra functions from [slim-sprig](https://go-task.github.io/slim-sprig).
 
 ## Multiline commands
 

@@ -1,10 +1,12 @@
-// Package slots defines the data structures for slot command storage.
-package slots
+// Package slot defines the data structures for slot command storage.
+package slot
 
 import (
 	"fmt"
 	"io"
 	"slices"
+
+	"github.com/agext/levenshtein"
 )
 
 // Slot represents a saved command with metadata.
@@ -22,7 +24,23 @@ type Slot struct {
 // Slots is a slice of Slot structs.
 type Slots []Slot
 
-// Add adds a new slot..
+// Names returns a slice of all slot names.
+func (s Slots) Names() []string {
+	names := make([]string, len(s))
+
+	for i, slot := range s {
+		names[i] = slot.Name
+	}
+
+	return names
+}
+
+// Slice returns a new slots object containing slots from index 'from' to 'to'.
+func (s Slots) Slice(from, to int) Slots {
+	return s[from:to]
+}
+
+// Add adds a new slot.
 func (s *Slots) Add(slot Slot) {
 	*s = append(*s, slot)
 }
@@ -42,6 +60,33 @@ func (s *Slots) Delete(name string) bool {
 // Exists checks if a slot with the given name exists.
 func (s Slots) Exists(name string) bool {
 	return s.index(name) != -1
+}
+
+// Closest returns slot names ranked by similarity to the given name.
+func (s Slots) Closest(name string) string {
+	if len(s) == 0 {
+		return ""
+	}
+
+	var out []string
+
+	best := -1
+
+	for _, slot := range s {
+		distance := levenshtein.Distance(name, slot.Name, nil)
+
+		switch {
+		case best == -1 || distance < best:
+			// Found a new best distance → reset list
+			best = distance
+			out = []string{slot.Name}
+		case distance == best:
+			// Same as current best → add to list
+			out = append(out, slot.Name)
+		}
+	}
+
+	return out[0]
 }
 
 // Get retrieves a pointer to the slot with the specified name, or nil if not found.

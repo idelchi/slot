@@ -6,15 +6,16 @@ import (
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 
-	"github.com/idelchi/slot/internal/slots"
+	"github.com/idelchi/slot/internal/slot"
 	"github.com/idelchi/slot/internal/store"
 )
 
 // Save returns the cobra command for saving command slots.
-func Save() *cobra.Command {
+func Save(config *string) *cobra.Command {
 	var (
-		tags  []string
-		force bool
+		tags        []string
+		description string
+		force       bool
 	)
 
 	cmd := &cobra.Command{
@@ -42,40 +43,42 @@ func Save() *cobra.Command {
 		`),
 		Args: cobra.ExactArgs(2), //nolint:mnd   // Clear from the context
 		RunE: func(cmd *cobra.Command, args []string) error {
-			store, err := store.New()
+			store, err := store.New(*config)
 			if err != nil {
 				return err
 			}
 
-			database, err := store.Load()
+			slots, err := store.Load()
 			if err != nil {
 				return err
 			}
 
-			slot, rawCommand := args[0], args[1]
-			if database.Exists(slot) && !force {
-				return fmt.Errorf("slot %q exists (use --force)", slot)
+			name, rawCommand := args[0], args[1]
+			if slots.Exists(name) && !force {
+				return fmt.Errorf("slot %q exists (use --force)", name)
 			}
 
-			database.Delete(slot)
+			slots.Delete(name)
 
-			database.Add(slots.Slot{
-				Name: slot,
-				Cmd:  rawCommand,
-				Tags: tags,
+			slots.Add(slot.Slot{
+				Name:        name,
+				Description: description,
+				Cmd:         rawCommand,
+				Tags:        tags,
 			})
 
-			if err := store.Save(database); err != nil {
+			if err := store.Save(slots); err != nil {
 				return err
 			}
 
-			fmt.Fprintf(cmd.OutOrStdout(), "saved %q\n", slot)
+			fmt.Fprintf(cmd.OutOrStdout(), "saved %q\n", name)
 
 			return nil
 		},
 	}
 
 	cmd.Flags().StringSliceVar(&tags, "tags", nil, "tags for the slot (repeatable)")
+	cmd.Flags().StringVar(&description, "description", "", "description for the slot")
 	cmd.Flags().BoolVar(&force, "force", false, "overwrite existing slot")
 
 	return cmd

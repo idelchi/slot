@@ -11,7 +11,7 @@ import (
 )
 
 // Apply executes a Go template with provided variables, returning an error if parsing fails or variables are missing.
-func Apply(templateString string, variables map[string]string) (string, error) {
+func Apply(templateString string, variables map[string]any) (string, error) {
 	template, err := template.New("cmd").Funcs(sprig.FuncMap()).Option("missingkey=error").Parse(templateString)
 	if err != nil {
 		return "", err

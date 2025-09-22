@@ -54,10 +54,10 @@ slot-pick-and-run() {
   cmd=${cmd//^J/$'\n'}
 
   case $key in
-    enter) BUFFER="slot run -y -- ${name}"; zle accept-line; return ;;
-    tab)   BUFFER="slot run -y -- ${name}" ;;
+    enter) BUFFER="slot run -y ${name}"; zle accept-line; return ;;
+    tab)   BUFFER="slot run -y ${name}" ;;
     btab)  BUFFER="${cmd}" ;;
-    ctrl-space) BUFFER="$(slot render -- ${name})" ;;
+    ctrl-space) BUFFER="$(slot render ${name})" ;;
   esac
 
   CURSOR=${#BUFFER}
