@@ -86,5 +86,5 @@ func DefaultSlotsFile() (string, error) {
 		return "slots.yaml", fmt.Errorf("getting home directory: %w", err)
 	}
 
-	return filepath.Join(home, ".config", "slot", "slots.yaml"), nil
+	return filepath.ToSlash(filepath.Join(home, ".config", "slot", "slots.yaml")), nil
 }
