@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/goccy/go-yaml"
 
@@ -19,8 +20,30 @@ func (store Store) Path() string {
 	return string(store)
 }
 
+// ExpandHome resolves home directory references in paths.
+// Replaces leading ~ with the user's home directory path.
+// Returns the original path if expansion fails or isn't needed.
+func ExpandHome(path string) string {
+	if !strings.HasPrefix(path, "~") {
+		return path
+	}
+
+	home, err := os.UserHomeDir()
+	if err != nil {
+		return path
+	}
+
+	if path == "~" {
+		return home
+	}
+
+	return filepath.Join(home, path[1:])
+}
+
 // New creates a new Store instance from the given file path.
 func New(slotsFile string) (Store, error) {
+	slotsFile = os.ExpandEnv(ExpandHome(slotsFile))
+
 	store := Store(slotsFile)
 
 	dataDir := filepath.Dir(slotsFile)

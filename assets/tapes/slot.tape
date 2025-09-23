@@ -1,4 +1,4 @@
-Output gifs/slot.gif
+Output assets/gifs/slot.gif
 
 Set Theme "iTerm2 Default"
 Set FontSize 14
@@ -9,13 +9,10 @@ Set TypingSpeed 75ms
 Set Shell zsh
 Env ZSH_AUTOSUGGEST_MANUAL_REBIND "1"
 Env ZSH_AUTOSUGGEST_ENABLED "0"
+Env SLOTS_FILE "~/assets/examples/slots.yaml"
 
 # Setup
 Hide
-Type 'mkdir -p ~/.config/slot'
-Enter
-Type 'cp ~/assets/examples/slots.yaml ~/.config/slot/slots.yaml'
-Enter
 Type 'eval "$(slot init zsh --fzf)"'
 Enter
 Type 'setopt interactivecomments'
@@ -54,3 +51,10 @@ Sleep 1s
 
 # Finally
 Sleep 4s
+
+# Cleanup
+Hide
+Type 'slot rm list'
+Enter
+Type "clear"
+Enter
