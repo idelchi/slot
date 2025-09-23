@@ -1,6 +1,9 @@
-# slot
+<h1 align="center">slot</h1>
 
-Save and render named shell commands with Go template substitution
+<p align="center">
+  <img alt="slot logo" src="assets/images/slot.png" height="150" />
+  <p align="center">Save and render named shell commands</p>
+</p>
 
 ---
 
