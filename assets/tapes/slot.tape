@@ -6,20 +6,8 @@ Set Width 1200
 Set Height 800
 Set TypingSpeed 75ms
 
-Set Shell zsh
-Env ZSH_AUTOSUGGEST_MANUAL_REBIND "1"
-Env ZSH_AUTOSUGGEST_ENABLED "0"
+Set Shell bash
 Env SLOTS_FILE "~/assets/examples/slots.yaml"
-
-# Setup
-Hide
-Type 'eval "$(slot init zsh --fzf)"'
-Enter
-Type 'setopt interactivecomments'
-Enter
-Type "clear"
-Enter
-Show
 
 Type '# Add a slot'
 Enter
@@ -40,6 +28,10 @@ Sleep 1s
 Enter
 
 Type '# Use fzf integration (ctrl-X)'
+Enter
+Sleep 500ms
+Type 'eval "$(slot init bash --fzf)"'
+Sleep 500ms
 Enter
 Ctrl+X
 Sleep 2s
