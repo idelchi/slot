@@ -7,7 +7,7 @@ Set Height 800
 Set TypingSpeed 75ms
 
 Set Shell bash
-Env SLOTS_FILE "~/assets/examples/slots.yaml"
+Env SLOTS_FILE "/home/user/assets/examples/slots.yaml"
 
 Type '# Add a slot'
 Enter
@@ -33,6 +33,8 @@ Sleep 500ms
 Type 'eval "$(slot init bash --fzf)"'
 Sleep 500ms
 Enter
+Type '# Ctrl+X'
+Sleep 500ms
 Ctrl+X
 Sleep 2s
 Type 'di'
