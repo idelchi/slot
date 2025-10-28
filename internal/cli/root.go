@@ -53,7 +53,6 @@ func Execute(version string) error {
 	root.Flags().SortFlags = false
 	root.PersistentFlags().SortFlags = false
 
-	root.CompletionOptions.DisableDefaultCmd = true
 	cobra.EnableCommandSorting = false
 
 	config := os.Getenv("SLOTS_FILE")
