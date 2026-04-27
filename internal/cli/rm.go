@@ -22,24 +22,27 @@ func Remove(config *string) *cobra.Command {
 				return err
 			}
 
-			slots, err := store.Load()
+			allSlots, err := store.Load()
 			if err != nil {
 				return err
 			}
 
-			if len(slots) == 0 {
+			if len(allSlots) == 0 {
 				return errors.New("no slots to remove")
 			}
 
 			slot := args[0]
-			if !slots.Exists(slot) {
-				return fmt.Errorf("no such slot %q: did you mean %q?", slot, slots.Closest(slot))
+			if !allSlots.Exists(slot) {
+				return fmt.Errorf("no such slot %q: did you mean %q?", slot, allSlots.Closest(slot))
 			}
 
-			slots.Delete(slot)
-
-			if err := store.Save(slots); err != nil {
+			deleted, err := store.Delete(slot)
+			if err != nil {
 				return err
+			}
+
+			if !deleted {
+				return fmt.Errorf("no such slot %q: did you mean %q?", slot, allSlots.Closest(slot))
 			}
 
 			fmt.Fprintf(cmd.OutOrStdout(), "removed %q\n", slot)

@@ -17,6 +17,8 @@ type Slot struct {
 	Description string `json:"description,omitempty"`
 	// Cmd is the command template with placeholders.
 	Cmd string
+	// Vars are default template variables for this slot.
+	Vars map[string]any `json:"vars,omitempty"`
 	// Tags are optional labels for organizing slots.
 	Tags []string `json:"tags,omitempty"`
 }
@@ -33,6 +35,23 @@ func (s Slots) Names() []string {
 	}
 
 	return names
+}
+
+// Unique returns slots without duplicate names, keeping the first occurrence.
+func (s Slots) Unique() Slots {
+	seen := map[string]bool{}
+	out := make(Slots, 0, len(s))
+
+	for _, slot := range s {
+		if seen[slot.Name] {
+			continue
+		}
+
+		seen[slot.Name] = true
+		out = append(out, slot)
+	}
+
+	return out
 }
 
 // Slice returns a new slots object containing slots from index 'from' to 'to'.
@@ -68,7 +87,7 @@ func (s Slots) Closest(name string) string {
 		return ""
 	}
 
-	var out []string
+	out := make([]string, 0, len(s))
 
 	best := -1
 
@@ -79,7 +98,8 @@ func (s Slots) Closest(name string) string {
 		case best == -1 || distance < best:
 			// Found a new best distance → reset list
 			best = distance
-			out = []string{slot.Name}
+
+			out = append(out[:0], slot.Name)
 		case distance == best:
 			// Same as current best → add to list
 			out = append(out, slot.Name)

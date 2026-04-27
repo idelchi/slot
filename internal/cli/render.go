@@ -59,7 +59,10 @@ func Render(config *string) *cobra.Command {
 				return fmt.Errorf("no such slot %q: did you mean %q?", slot, slots.Closest(slot))
 			}
 
+			selected := slots.Get(slot)
 			variables := map[string]any{}
+
+			maps.Copy(variables, selected.Vars)
 
 			variables["SLOTS_FILE"] = filepath.ToSlash(store.Path())
 			variables["SLOTS_DIR"] = filepath.ToSlash(filepath.Dir(store.Path()))
@@ -75,7 +78,7 @@ func Render(config *string) *cobra.Command {
 			//nolint:errcheck,forcetypeassert  // args are always strings
 			variables["CLI_ARGS_SPLIT"] = strings.Split(variables["CLI_ARGS"].(string), " ")
 
-			rendered, err := render.Apply(slots.Get(slot).Cmd, variables)
+			rendered, err := render.Apply(selected.Cmd, variables)
 			if err != nil {
 				return err
 			}

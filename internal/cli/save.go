@@ -16,6 +16,7 @@ func Save(config *string) *cobra.Command {
 		tags        []string
 		description string
 		force       bool
+		vars        []string
 	)
 
 	cmd := &cobra.Command{
@@ -35,6 +36,9 @@ func Save(config *string) *cobra.Command {
 			# Save with template variables and tags
 			slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod
 
+			# Save with default variables
+			slot save deploy 'kubectl apply -f {{.file}} -n {{.namespace}}' --var file=k8s.yml --var namespace=default
+
 			# Overwrite existing slot
 			slot save deploy 'kubectl apply -f {{.file}} --namespace {{.ns}}' --force
 
@@ -48,14 +52,24 @@ func Save(config *string) *cobra.Command {
 				return err
 			}
 
-			slots, err := store.Load()
+			allSlots, err := store.Load()
+			if err != nil {
+				return err
+			}
+
+			slots, err := store.LoadLocal()
 			if err != nil {
 				return err
 			}
 
 			name, rawCommand := args[0], args[1]
-			if slots.Exists(name) && !force {
+			if allSlots.Exists(name) && !force {
 				return fmt.Errorf("slot %q exists (use --force)", name)
+			}
+
+			slotVars, err := parseWiths(vars)
+			if err != nil {
+				return err
 			}
 
 			slots.Delete(name)
@@ -64,6 +78,7 @@ func Save(config *string) *cobra.Command {
 				Name:        name,
 				Description: description,
 				Cmd:         rawCommand,
+				Vars:        slotVars,
 				Tags:        tags,
 			})
 
@@ -80,6 +95,7 @@ func Save(config *string) *cobra.Command {
 	cmd.Flags().StringSliceVar(&tags, "tags", nil, "tags for the slot (repeatable)")
 	cmd.Flags().StringVar(&description, "description", "", "description for the slot")
 	cmd.Flags().BoolVar(&force, "force", false, "overwrite existing slot")
+	cmd.Flags().StringArrayVar(&vars, "var", nil, "default template variable (key=value, repeatable)")
 
 	return cmd
 }

@@ -1,31 +1,32 @@
-- name: sysinfo
-  description: System information
-  cmd: |
-    echo "User: $(whoami)"
-    echo "Date: $(date)"
-  tags:
-    - sys
+slots:
+  - name: sysinfo
+    description: System information
+    cmd: |
+      echo "User: $(whoami)"
+      echo "Date: $(date)"
+    tags:
+      - sys
 
-- name: disk
-  description: Disk usage
-  cmd: df -h
-  tags:
-    - sys
-    - usage
+  - name: disk
+    description: Disk usage
+    cmd: df -h
+    tags:
+      - sys
+      - usage
 
-- name: processes
-  description: Running processes
-  cmd: ps aux
-  tags:
-    - sys
+  - name: processes
+    description: Running processes
+    cmd: ps aux
+    tags:
+      - sys
 
-- name: ports
-  description: Listening network ports
-  cmd: netstat -tuln
-  tags:
-    - sys
-    - network
+  - name: ports
+    description: Listening network ports
+    cmd: netstat -tuln
+    tags:
+      - sys
+      - network
 
-- name: view
-  description: Slots configuration file
-  cmd: cat "{{ .SLOTS_FILE }}"
+  - name: view
+    description: Slots configuration file
+    cmd: cat "{{ .SLOTS_FILE }}"

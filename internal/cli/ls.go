@@ -1,6 +1,8 @@
 package cli
 
 import (
+	"slices"
+
 	"github.com/MakeNowJust/heredoc/v2"
 	"github.com/spf13/cobra"
 
@@ -81,15 +83,7 @@ func filterSlotsByTags(slots slot.Slots, filterTags []string) slot.Slots {
 		hasAllTags := true
 
 		for _, filterTag := range filterTags {
-			found := false
-
-			for _, tag := range slot.Tags {
-				if tag == filterTag {
-					found = true
-
-					break
-				}
-			}
+			found := slices.Contains(slot.Tags, filterTag)
 
 			if !found {
 				hasAllTags = false

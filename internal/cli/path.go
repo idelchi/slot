@@ -22,7 +22,7 @@ func Path(slotsFile *string) *cobra.Command {
 		`),
 		Args: cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
-			if _, err := fmt.Fprintln(cmd.OutOrStdout(), filepath.FromSlash(*slotsFile)); err != nil {
+			if _, err := fmt.Fprintln(cmd.OutOrStdout(), filepath.ToSlash(*slotsFile)); err != nil {
 				return err
 			}
 

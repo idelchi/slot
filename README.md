@@ -33,6 +33,11 @@ $ slot save deploy 'kubectl apply -f {{.file}}' --tags k8s --tags prod --descrip
 ```
 
 ```sh
+# Save a command with default variables
+$ slot save deploy 'kubectl apply -f {{.file}} -n {{.namespace}}' --var file=k8s.yml --var namespace=default
+```
+
+```sh
 # Render a command with variable substitution
 $ slot render deploy file=k8s.yml
 kubectl apply -f k8s.yml
@@ -85,6 +90,7 @@ Adding the `--fzf` flag enables further integration, binding `Ctrl-X` and `Ctrl-
 - **Flags:**
   - `--tags` – Tags for the slot (repeatable)
   - `--description` – Description for the slot
+  - `--var` – Default template variable as `key=value` (repeatable)
   - `--force` – Overwrite existing slot
 
 </details>
@@ -132,6 +138,45 @@ In addition to your own `key=value` arguments, the following variables are alway
 - **`CLI_ARGS_SPLIT`** – Same arguments as above, but preserved as a list (`[]string`) for iteration
 
 All templates use Go’s [`text/template`](https://pkg.go.dev/text/template) syntax, with extra functions from [slim-sprig](https://go-task.github.io/slim-sprig).
+
+Slots can define default variables with `vars`. Command-line `key=value` arguments override slot variables.
+
+```yaml
+slots:
+  - name: deploy
+    description: Deploy manifest
+    cmd: kubectl apply -f {{.file}} -n {{.namespace}}
+    vars:
+      file: k8s.yml
+      namespace: default
+    tags:
+      - k8s
+```
+
+Variable precedence is:
+
+1. Slot `vars`
+2. Built-in variables such as `SLOTS_FILE` and `SLOTS_DIR`
+3. Command-line `key=value` arguments
+
+## Includes
+
+To include other slot files, use `include`:
+
+```yaml
+include:
+  - ./shared.yaml
+  - ./team/slots.yaml
+slots:
+  - name: deploy
+    cmd: kubectl apply -f {{.file}}
+    vars:
+      file: k8s.yml
+```
+
+Include paths are resolved relative to the file that declares them.
+Recursive includes fail with an error. `list` and `render` can use included slots.
+`save` writes new slots to the root slots file; `remove` deletes the visible slot from whichever file defines it.
 
 ## Demo
 
